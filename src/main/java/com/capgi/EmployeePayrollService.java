@@ -43,6 +43,10 @@ public class EmployeePayrollService {
 		return 0;
 	}
 
+	public void printData(IOService ioService) {
+		new EmployeePayrollFileIOService().printData();
+	}
+
 	public static void main(String[] args) {
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService(employeePayrollList);
