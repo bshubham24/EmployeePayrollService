@@ -1,6 +1,7 @@
 package com.capgi;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,6 +18,8 @@ public class EmployeePayrollServiceTest {
 		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmployees));
 		employeePayrollService.writeEmployeePayrollData(EmployeePayrollService.IOService.FILE_IO);
 		employeePayrollService.printData(IOService.FILE_IO);
+		List<EmployeePayrollData> employeeList = employeePayrollService.readData(IOService.FILE_IO);
+		System.out.println(employeeList);
 		Assert.assertEquals(3, employeePayrollService.countEntries(EmployeePayrollService.IOService.FILE_IO));
 	}
 }
