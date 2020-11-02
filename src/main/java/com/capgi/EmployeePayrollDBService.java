@@ -122,4 +122,27 @@ public class EmployeePayrollDBService {
 		return employeePayrollList;
 	}
 
+	public List<EmployeePayrollData> getEmpDataGroupedByGender(String column, String operation, String gender)
+			throws EmployeePayrollException {
+
+		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+		String sql = String.format("SELECT gender, %s(%s) FROM employee_payroll GROUP BY gender;", operation, column);
+		try (Connection connection = getConnection()) {
+
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				String gender1 = resultSet.getString("gender");
+				double salary = resultSet.getDouble(operation + "(basic_pay)");
+
+				employeePayrollList.add(new EmployeePayrollData(gender1, salary));
+			}
+
+		} catch (SQLException e) {
+			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.INVALID_INFO, e.getMessage());
+		}
+		return employeePayrollList;
+
+	}
+
 }
