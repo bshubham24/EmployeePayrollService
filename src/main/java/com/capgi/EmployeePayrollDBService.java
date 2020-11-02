@@ -13,7 +13,7 @@ import com.capgi.EmployeePayrollException.ExceptionType;
 
 public class EmployeePayrollDBService {
 	private Connection getConnection() {
-		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false"; // characterEncoding=utf8
+		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?characterEncoding=utf8"; // characterEncoding=utf8
 		String userName = "root";
 		String password = "CL@Liv#6@RM#13";
 		Connection connection = null;
@@ -42,6 +42,29 @@ public class EmployeePayrollDBService {
 			throw new EmployeePayrollException(ExceptionType.CONNECTION_ERROR, e.getMessage());
 		}
 		return employeePayrollList;
+	}
+
+	public int updateEmployeeData(String name, double salary) throws EmployeePayrollException {
+		return this.updateEmployeeDataUsingStatement(name, salary);
+	}
+
+	private int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollException {
+		String sql = String.format("update employee_payroll set basic_pay = %.2f where name ='%s';", salary, name);
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			return statement.executeUpdate(sql);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.CONNECTION_ERROR, e.getMessage());
+		}
+	}
+
+	public EmployeePayrollData getEmployeePayrollData(String name) throws EmployeePayrollException {
+
+		List<EmployeePayrollData> employeePayrollList = this.readData();
+		EmployeePayrollData employeeData = employeePayrollList.stream()
+				.filter(employee -> employee.getName().equals(name)).findFirst().orElse(null);
+		return employeeData;
+
 	}
 
 }

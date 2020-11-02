@@ -27,7 +27,7 @@ public class EmployeePayrollData {
 		this.date = date;
 	}
 
-	public double getSalary() {
+	public Double getSalary() {
 		return salary;
 	}
 
@@ -49,6 +49,16 @@ public class EmployeePayrollData {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		EmployeePayrollData that = (EmployeePayrollData) o;
+		return id == that.id && Double.compare(that.salary, salary) == 0 && name.equals(that.name);
 	}
 
 	@Override

@@ -63,9 +63,31 @@ public class EmployeePayrollService {
 	}
 
 	public List<EmployeePayrollData> readEmployeePayrollData(IOService dbIo) throws EmployeePayrollException {
-		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+		employeePayrollList = new ArrayList<EmployeePayrollData>();
 		EmployeePayrollDBService dbService = new EmployeePayrollDBService();
 		employeePayrollList = dbService.readData();
 		return employeePayrollList;
+	}
+
+	public void updateEmployeeSalary(String name, double salary) throws EmployeePayrollException {
+		int result = new EmployeePayrollDBService().updateEmployeeData(name, salary);
+		if (result == 0)
+			return;
+		EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+		if (employeePayrollData != null)
+			employeePayrollData.setSalary(salary);
+
+	}
+
+	private EmployeePayrollData getEmployeePayrollData(String name) {
+		EmployeePayrollData employeePayrollData;
+		employeePayrollData = this.employeePayrollList.stream().filter(employee -> employee.getName().equals(name))
+				.findFirst().orElse(null);
+		return employeePayrollData;
+	}
+
+	public boolean checkEmployeePayrollInSyncWithDB(String name) throws EmployeePayrollException {
+		EmployeePayrollData employeePayrollData = new EmployeePayrollDBService().getEmployeePayrollData(name);
+		return employeePayrollData.getSalary().equals(getEmployeePayrollData(name).getSalary());
 	}
 }
