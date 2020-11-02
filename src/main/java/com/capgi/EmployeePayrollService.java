@@ -12,10 +12,14 @@ public class EmployeePayrollService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO
 	}
 
+	private EmployeePayrollDBService employeePayrollDBService;
+
 	public EmployeePayrollService() {
+		employeePayrollDBService = EmployeePayrollDBService.getInstance();
 	}
 
 	public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
+		this();
 		this.employeePayrollList = employeePayrollList;
 	}
 
@@ -64,13 +68,12 @@ public class EmployeePayrollService {
 
 	public List<EmployeePayrollData> readEmployeePayrollData(IOService dbIo) throws EmployeePayrollException {
 		employeePayrollList = new ArrayList<EmployeePayrollData>();
-		EmployeePayrollDBService dbService = new EmployeePayrollDBService();
-		employeePayrollList = dbService.readData();
+		employeePayrollList = employeePayrollDBService.readData();
 		return employeePayrollList;
 	}
 
 	public void updateEmployeeSalary(String name, double salary) throws EmployeePayrollException {
-		int result = new EmployeePayrollDBService().updateEmployeeData(name, salary);
+		int result = employeePayrollDBService.updateEmployeeData(name, salary);
 		if (result == 0)
 			return;
 		EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
@@ -87,7 +90,7 @@ public class EmployeePayrollService {
 	}
 
 	public boolean checkEmployeePayrollInSyncWithDB(String name) throws EmployeePayrollException {
-		EmployeePayrollData employeePayrollData = new EmployeePayrollDBService().getEmployeePayrollData(name);
-		return employeePayrollData.getSalary().equals(getEmployeePayrollData(name).getSalary());
+		List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
+		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
 	}
 }
