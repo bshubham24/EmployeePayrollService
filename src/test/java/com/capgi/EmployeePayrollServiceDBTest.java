@@ -21,8 +21,8 @@ public class EmployeePayrollServiceDBTest {
 	public void whenSalaryIsUpdated_ShouldMatchInDBAndList() throws EmployeePayrollException {
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
 		List<EmployeePayrollData> empPayrollList = empPayRollService.readEmployeePayrollData(IOService.DB_IO);
-		empPayRollService.updateEmployeeSalary("shubham", 150000.0);
-		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("shubham");
+		empPayRollService.updateEmployeeSalary("anant", 100000.0);
+		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("anant");
 		assertTrue(result);
 	}
 }
