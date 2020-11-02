@@ -36,4 +36,38 @@ public class EmployeePayrollServiceDBTest {
 				endDate);
 		assertEquals(2, empPayrollList.size());
 	}
+
+	@Test
+	public void givenDBFindSumOfSalaryOfMale_shouldReturnSum() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("basic_pay", "SUM", "M");
+		double sum = empPayrollList.get(0).getSalary();
+		assertEquals(250000.00, sum, 0);
+	}
+
+	@Test
+	public void givenDBFindAvgOfSalaryOfMale_shouldReturnSum() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("basic_pay", "Avg", "M");
+		double sum = empPayrollList.get(0).getSalary();
+		assertEquals(125000.00, sum, 0);
+	}
+
+	@Test
+	public void givenDBFindMaxOfSalaryOfMale_shouldReturnSum() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("basic_pay", "MAX", "M");
+		double sum = empPayrollList.get(0).getSalary();
+		assertEquals(150000.00, sum, 0);
+	}
+
+	@Test
+	public void givenDBFindMinOfSalaryOfFemale_shouldReturnSum() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("basic_pay", "MIN", "F");
+		String gender = empPayrollList.get(1).getGender();
+		double sum = empPayrollList.get(1).getSalary();
+		assertEquals(42000, sum, 0);
+		assertEquals("F", gender);
+	}
 }

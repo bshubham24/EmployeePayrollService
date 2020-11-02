@@ -95,6 +95,12 @@ public class EmployeePayrollService {
 		return employeePayrollData;
 	}
 
+	public List<EmployeePayrollData> getEmpDataGroupedByGender(String column, String operation, String gender)
+			throws EmployeePayrollException {
+		return employeePayrollDBService.getEmpDataGroupedByGender(column, operation, gender);
+
+	}
+
 	public boolean checkEmployeePayrollInSyncWithDB(String name) throws EmployeePayrollException {
 		List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
