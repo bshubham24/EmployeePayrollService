@@ -1,14 +1,30 @@
 package com.capgi;
 
+import java.time.LocalDate;
+
 public class EmployeePayrollData {
 	private int id;
 	private String name;
 	private double salary;
+	private LocalDate date;
 
 	public EmployeePayrollData(Integer id, String name, Double salary) {
 		this.id = id;
 		this.name = name;
 		this.salary = salary;
+	}
+
+	public EmployeePayrollData(Integer id, String name, Double salary, LocalDate date) {
+		this(id, name, salary);
+		this.date = date;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 
 	public double getSalary() {

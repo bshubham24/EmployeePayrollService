@@ -61,4 +61,11 @@ public class EmployeePayrollService {
 		} else
 			return null;
 	}
+
+	public List<EmployeePayrollData> readEmployeePayrollData(IOService dbIo) throws EmployeePayrollException {
+		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+		EmployeePayrollDBService dbService = new EmployeePayrollDBService();
+		employeePayrollList = dbService.readData();
+		return employeePayrollList;
+	}
 }
