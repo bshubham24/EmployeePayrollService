@@ -1,5 +1,6 @@
 package com.capgi;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -80,6 +81,11 @@ public class EmployeePayrollService {
 		if (employeePayrollData != null)
 			employeePayrollData.setSalary(salary);
 
+	}
+
+	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate)
+			throws EmployeePayrollException {
+		return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate, endDate);
 	}
 
 	private EmployeePayrollData getEmployeePayrollData(String name) {

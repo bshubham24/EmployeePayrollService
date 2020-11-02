@@ -1,6 +1,7 @@
 package com.capgi;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,14 +51,14 @@ public class EmployeePayrollDBService {
 		return employeePayrollList;
 	}
 
-	private List<EmployeePayrollData> getEmployeePayrollData(ResultSet result) throws EmployeePayrollException {
+	private List<EmployeePayrollData> getEmployeePayrollData(ResultSet resultSet) throws EmployeePayrollException {
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
 		try {
-			while (result.next()) {
-				int id = result.getInt("id");
-				String name = result.getString("name");
-				double salary = result.getDouble("basic_pay");
-				LocalDate startDate = result.getDate("start").toLocalDate();
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String name = resultSet.getString("name");
+				double salary = resultSet.getDouble("basic_pay");
+				LocalDate startDate = resultSet.getDate("start").toLocalDate();
 				employeePayrollList.add(new EmployeePayrollData(id, name, salary, startDate));
 			}
 		} catch (SQLException e) {
@@ -104,6 +105,21 @@ public class EmployeePayrollDBService {
 		} catch (SQLException e) {
 			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.CONNECTION_ERROR, e.getMessage());
 		}
+	}
+
+	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate)
+			throws EmployeePayrollException {
+		String sql = String.format("SELECT * FROM employee_payroll WHERE start BETWEEN '%s' AND '%s';",
+				Date.valueOf(startDate), Date.valueOf(endDate));
+		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+		try (Connection connection = getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			employeePayrollList = this.getEmployeePayrollData(resultSet);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.INVALID_INFO, e.getMessage());
+		}
+		return employeePayrollList;
 	}
 
 }

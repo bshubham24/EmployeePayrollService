@@ -3,6 +3,7 @@ package com.capgi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.Test;
@@ -24,5 +25,15 @@ public class EmployeePayrollServiceDBTest {
 		empPayRollService.updateEmployeeSalary("anant", 100000.0);
 		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("anant");
 		assertTrue(result);
+	}
+
+	@Test
+	public void whenDataForDateRangeIsRetrieved_ShouldReturnEmpCount() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		LocalDate startDate = LocalDate.of(2020, 9, 16);
+		LocalDate endDate = LocalDate.now();
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmployeePayrollDataForDateRange(startDate,
+				endDate);
+		assertEquals(2, empPayrollList.size());
 	}
 }
