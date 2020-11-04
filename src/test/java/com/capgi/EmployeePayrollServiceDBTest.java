@@ -15,14 +15,14 @@ public class EmployeePayrollServiceDBTest {
 	public void whenRecordsAreRetrievedFromEmpDatabaseShouldMatchTheEmpCount() throws EmployeePayrollException {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(IOService.DB_IO);
-		assertEquals(4, employeePayrollData.size());
+		assertEquals(3, employeePayrollData.size());
 	}
 
 	@Test
 	public void whenSalaryIsUpdated_ShouldMatchInDBAndList() throws EmployeePayrollException {
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
-		List<EmployeePayrollData> empPayrollList = empPayRollService.readEmployeePayrollData(IOService.DB_IO);
-		empPayRollService.updateEmployeeSalary("anant", 100000.0);
+		empPayRollService.readEmployeePayrollData(IOService.DB_IO);
+		empPayRollService.updateEmployeeSalary("anant", 20000);
 		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("anant");
 		assertTrue(result);
 	}
@@ -30,44 +30,53 @@ public class EmployeePayrollServiceDBTest {
 	@Test
 	public void whenDataForDateRangeIsRetrieved_ShouldReturnEmpCount() throws EmployeePayrollException {
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
-		LocalDate startDate = LocalDate.of(2020, 9, 16);
+		LocalDate startDate = LocalDate.of(2020, 07, 16);
 		LocalDate endDate = LocalDate.now();
 		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmployeePayrollDataForDateRange(startDate,
 				endDate);
-		assertEquals(2, empPayrollList.size());
+		assertEquals(1, empPayrollList.size());
 	}
 
 	@Test
 	public void givenDBFindSumOfSalaryOfMale_shouldReturnSum() throws EmployeePayrollException {
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
-		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("basic_pay", "SUM", "M");
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("salary", "SUM", "M");
 		double sum = empPayrollList.get(0).getSalary();
-		assertEquals(250000.00, sum, 0);
+		assertEquals(70000, sum, 0);
 	}
 
 	@Test
 	public void givenDBFindAvgOfSalaryOfMale_shouldReturnSum() throws EmployeePayrollException {
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
-		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("basic_pay", "Avg", "M");
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("salary", "Avg", "M");
 		double sum = empPayrollList.get(0).getSalary();
-		assertEquals(125000.00, sum, 0);
+		assertEquals(35000, sum, 0);
 	}
 
 	@Test
 	public void givenDBFindMaxOfSalaryOfMale_shouldReturnSum() throws EmployeePayrollException {
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
-		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("basic_pay", "MAX", "M");
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("salary", "MAX", "M");
 		double sum = empPayrollList.get(0).getSalary();
-		assertEquals(150000.00, sum, 0);
+		assertEquals(50000, sum, 0);
 	}
 
 	@Test
 	public void givenDBFindMinOfSalaryOfFemale_shouldReturnSum() throws EmployeePayrollException {
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
-		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("basic_pay", "MIN", "F");
+		List<EmployeePayrollData> empPayrollList = empPayRollService.getEmpDataGroupedByGender("salary", "MIN", "F");
 		String gender = empPayrollList.get(1).getGender();
 		double sum = empPayrollList.get(1).getSalary();
-		assertEquals(42000, sum, 0);
+		assertEquals(10000, sum, 0);
 		assertEquals("F", gender);
+	}
+
+	@Test
+	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		empPayRollService.readEmployeePayrollData(IOService.DB_IO);
+		empPayRollService.addEmpToPayroll("tanya", 40000, LocalDate.now(), "F");
+		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("tanya");
+		assertTrue(result);
 	}
 }
