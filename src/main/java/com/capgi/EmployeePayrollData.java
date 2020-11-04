@@ -38,6 +38,9 @@ public class EmployeePayrollData {
 		this.department = department;
 	}
 
+	public EmployeePayrollData() {
+	}
+
 	public LocalDate getDate() {
 		return date;
 	}
@@ -98,7 +101,7 @@ public class EmployeePayrollData {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		EmployeePayrollData that = (EmployeePayrollData) o;
-		return id == that.id && Double.compare(that.salary, salary) == 0 && name.contentEquals(that.name)
-				&& gender.contentEquals(that.gender);
+		return id == that.id && Double.compare(that.salary, salary) == 0 && this.name.contentEquals(that.name)
+				&& this.gender.contentEquals(that.gender);
 	}
 }

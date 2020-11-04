@@ -131,7 +131,7 @@ public class EmployeePayrollDBService {
 	}
 
 	public EmployeePayrollData addEmployeeToPayroll(String name, double salary, LocalDate start, String gender,
-			List<String> deptList) throws EmployeePayrollException {
+			String dept) throws EmployeePayrollException {
 		int id = -1;
 		EmployeePayrollData employeePayrollData = null;
 		Connection connection = null;
@@ -161,7 +161,7 @@ public class EmployeePayrollDBService {
 			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.INVALID_INFO, e.getMessage());
 		}
 		try (Statement statement = connection.createStatement()) {
-			String sql = String.format("INSERT INTO emp_dept (id,department) VALUES ('%s','%s');", id, deptList);
+			String sql = String.format("INSERT INTO emp_dept (id,department) VALUES ('%s','%s');", id, dept);
 			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 			if (rowAffected == 1) {
 				ResultSet resultSet = statement.getGeneratedKeys();
