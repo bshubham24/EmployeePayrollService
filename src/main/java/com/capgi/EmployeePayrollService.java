@@ -83,9 +83,9 @@ public class EmployeePayrollService {
 
 	}
 
-	public void addEmpToPayroll(String name, double salary, LocalDate start, String gender)
+	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender)
 			throws EmployeePayrollException {
-		employeePayrollList.add(employeePayrollDBService.addEmpToPayroll(name, salary, start, gender));
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, start, gender));
 	}
 
 	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate)

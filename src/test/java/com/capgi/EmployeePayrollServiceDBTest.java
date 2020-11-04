@@ -75,7 +75,7 @@ public class EmployeePayrollServiceDBTest {
 	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
 		empPayRollService.readEmployeePayrollData(IOService.DB_IO);
-		empPayRollService.addEmpToPayroll("tanya", 40000, LocalDate.now(), "F");
+		empPayRollService.addEmployeeToPayroll("tanya", 40000, LocalDate.now(), "F");
 		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("tanya");
 		assertTrue(result);
 	}
