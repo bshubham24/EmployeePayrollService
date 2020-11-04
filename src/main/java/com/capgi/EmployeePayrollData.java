@@ -99,6 +99,6 @@ public class EmployeePayrollData {
 			return false;
 		EmployeePayrollData that = (EmployeePayrollData) o;
 		return id == that.id && Double.compare(that.salary, salary) == 0 && name.contentEquals(that.name)
-				&& gender.contentEquals(that.gender) && department.equals(that.department);
+				&& gender.contentEquals(that.gender);
 	}
 }

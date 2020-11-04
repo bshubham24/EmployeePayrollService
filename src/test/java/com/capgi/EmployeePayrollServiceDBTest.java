@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -73,10 +74,13 @@ public class EmployeePayrollServiceDBTest {
 
 	@Test
 	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
+		List<String> deptList = new ArrayList<>();
+		deptList.add("Sales");
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
 		empPayRollService.readEmployeePayrollData(IOService.DB_IO);
-		empPayRollService.addEmployeeToPayroll("tanya", 40000, LocalDate.now(), "F");
+		empPayRollService.addEmployeeToPayroll("tanya", 40000, LocalDate.now(), "F", deptList);
 		boolean result = empPayRollService.checkEmployeePayrollInSyncWithDB("tanya");
 		assertTrue(result);
 	}
+
 }
