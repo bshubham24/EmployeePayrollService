@@ -39,7 +39,7 @@ public class EmployeePayrollDBService {
 	}
 
 	public List<EmployeePayrollData> readData() throws EmployeePayrollException {
-		String sql = "Select * from employee_payroll";
+		String sql = "Select * from employee_data";
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
@@ -57,7 +57,7 @@ public class EmployeePayrollDBService {
 			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
 				String name = resultSet.getString("name");
-				double salary = resultSet.getDouble("basic_pay");
+				double salary = resultSet.getDouble("salary");
 				LocalDate startDate = resultSet.getDate("start").toLocalDate();
 				employeePayrollList.add(new EmployeePayrollData(id, name, salary, startDate));
 			}
@@ -71,7 +71,7 @@ public class EmployeePayrollDBService {
 
 		try {
 			Connection connection = this.getConnection();
-			String sql = "SELECT * FROM employee_payroll WHERE name = ?";
+			String sql = "SELECT * FROM employee_data WHERE name = ?";
 			employeePayrollDataStatement = connection.prepareStatement(sql);
 		} catch (SQLException e) {
 			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.CONNECTION_ERROR, e.getMessage());
@@ -98,7 +98,7 @@ public class EmployeePayrollDBService {
 	}
 
 	private int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollException {
-		String sql = String.format("update employee_payroll set basic_pay = %.2f where name ='%s';", salary, name);
+		String sql = String.format("update employee_data set salary = %.2f where name ='%s';", salary, name);
 		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
 			return statement.executeUpdate(sql);
@@ -107,9 +107,31 @@ public class EmployeePayrollDBService {
 		}
 	}
 
+	public EmployeePayrollData addEmpToPayroll(String name, double salary, LocalDate start, String gender)
+			throws EmployeePayrollException {
+		int id = -1;
+		EmployeePayrollData employeePayrollData = null;
+		String sql = String.format(
+				"INSERT INTO employee_data(name, salary, start, gender) VALUES('%s', '%s', '%s', '%s');", name, salary,
+				Date.valueOf(start), gender);
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if (resultSet.next())
+					id = resultSet.getInt(1);
+			}
+			employeePayrollData = new EmployeePayrollData(id, name, salary, start, gender);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.INVALID_INFO, e.getMessage());
+		}
+		return employeePayrollData;
+	}
+
 	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate)
 			throws EmployeePayrollException {
-		String sql = String.format("SELECT * FROM employee_payroll WHERE start BETWEEN '%s' AND '%s';",
+		String sql = String.format("SELECT * FROM employee_data WHERE start BETWEEN '%s' AND '%s';",
 				Date.valueOf(startDate), Date.valueOf(endDate));
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
 		try (Connection connection = getConnection()) {
@@ -126,14 +148,14 @@ public class EmployeePayrollDBService {
 			throws EmployeePayrollException {
 
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
-		String sql = String.format("SELECT gender, %s(%s) FROM employee_payroll GROUP BY gender;", operation, column);
+		String sql = String.format("SELECT gender, %s(%s) FROM employee_data GROUP BY gender;", operation, column);
 		try (Connection connection = getConnection()) {
 
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				String gender1 = resultSet.getString("gender");
-				double salary = resultSet.getDouble(operation + "(basic_pay)");
+				double salary = resultSet.getDouble(operation + "(salary)");
 
 				employeePayrollList.add(new EmployeePayrollData(gender1, salary));
 			}

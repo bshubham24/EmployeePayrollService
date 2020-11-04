@@ -83,6 +83,11 @@ public class EmployeePayrollService {
 
 	}
 
+	public void addEmpToPayroll(String name, double salary, LocalDate start, String gender)
+			throws EmployeePayrollException {
+		employeePayrollList.add(employeePayrollDBService.addEmpToPayroll(name, salary, start, gender));
+	}
+
 	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate)
 			throws EmployeePayrollException {
 		return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate, endDate);
@@ -105,4 +110,5 @@ public class EmployeePayrollService {
 		List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
 	}
+
 }
