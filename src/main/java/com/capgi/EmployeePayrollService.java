@@ -88,6 +88,10 @@ public class EmployeePayrollService {
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, start, gender, dept));
 	}
 
+	public void remove(String name) throws EmployeePayrollException {
+		employeePayrollDBService.remove(name);
+	}
+
 	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate)
 			throws EmployeePayrollException {
 		return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate, endDate);
