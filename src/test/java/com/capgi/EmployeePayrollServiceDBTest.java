@@ -89,4 +89,13 @@ public class EmployeePayrollServiceDBTest {
 		assertTrue(result);
 	}
 
+	@Test
+	public void givenEmployeeList_WhenDeleted_ShouldReturnProperCount() throws EmployeePayrollException {
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		empPayRollService.readEmployeePayrollData(IOService.DB_IO);
+		empPayRollService.remove("tanya");
+		List<EmployeePayrollData> empPayrollList = empPayRollService.readEmployeePayrollData(IOService.DB_IO);
+		assertEquals(11, empPayrollList.size());
+	}
+
 }

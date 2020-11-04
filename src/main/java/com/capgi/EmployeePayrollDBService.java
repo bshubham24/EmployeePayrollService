@@ -39,7 +39,7 @@ public class EmployeePayrollDBService {
 	}
 
 	public List<EmployeePayrollData> readData() throws EmployeePayrollException {
-		String sql = "Select * from employee_data";
+		String sql = "SELECT * FROM employee_data WHERE status = 'active';";
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
@@ -72,7 +72,7 @@ public class EmployeePayrollDBService {
 
 		try {
 			Connection connection = this.getConnection();
-			String sql = "SELECT * FROM employee_data WHERE name = ?";
+			String sql = "SELECT * FROM employee_data WHERE name = ? AND status = 'active'";
 			employeePayrollDataStatement = connection.prepareStatement(sql);
 		} catch (SQLException e) {
 			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.CONNECTION_ERROR, e.getMessage());
@@ -99,7 +99,8 @@ public class EmployeePayrollDBService {
 	}
 
 	private int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollException {
-		String sql = String.format("update employee_data set salary = %.2f where name ='%s';", salary, name);
+		String sql = String.format("update employee_data set salary = %.2f where name ='%s' AND status = 'active';",
+				salary, name);
 		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
 			return statement.executeUpdate(sql);
@@ -212,9 +213,20 @@ public class EmployeePayrollDBService {
 		return employeePayrollData;
 	}
 
+	public void remove(String name) throws EmployeePayrollException {
+		String sql = String.format("UPDATE employee_data SET status = 'inactive' WHERE name = '%s';", name);
+		try (Connection connection = getConnection()) {
+			Statement statement = connection.createStatement();
+			statement.execute(sql);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.INVALID_INFO, e.getMessage());
+		}
+	}
+
 	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate)
 			throws EmployeePayrollException {
-		String sql = String.format("SELECT * FROM employee_data WHERE start BETWEEN '%s' AND '%s';",
+		String sql = String.format(
+				"SELECT * FROM employee_data WHERE status = 'active' AND start BETWEEN '%s' AND '%s';",
 				Date.valueOf(startDate), Date.valueOf(endDate));
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
 		try (Connection connection = getConnection()) {
@@ -231,7 +243,8 @@ public class EmployeePayrollDBService {
 			throws EmployeePayrollException {
 
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
-		String sql = String.format("SELECT gender, %s(%s) FROM employee_data GROUP BY gender;", operation, column);
+		String sql = String.format("SELECT gender, %s(%s) FROM employee_data WHERE status = 'active' GROUP BY gender;",
+				operation, column);
 		try (Connection connection = getConnection()) {
 
 			Statement statement = connection.createStatement();
