@@ -1,6 +1,7 @@
 package com.capgi;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class EmployeePayrollData {
 	private int id;
@@ -8,6 +9,7 @@ public class EmployeePayrollData {
 	private double salary;
 	private LocalDate date;
 	private String gender;
+	private List<String> department;
 
 	public EmployeePayrollData(Integer id, String name, Double salary) {
 		this.id = id;
@@ -28,6 +30,12 @@ public class EmployeePayrollData {
 	public EmployeePayrollData(String gender, Double salary) {
 		this.gender = gender;
 		this.salary = salary;
+	}
+
+	public EmployeePayrollData(Integer id, String name, Double salary, LocalDate date, String gender,
+			List<String> department) {
+		this(id, name, salary, date, gender);
+		this.department = department;
 	}
 
 	public LocalDate getDate() {
@@ -70,6 +78,19 @@ public class EmployeePayrollData {
 		this.gender = gender;
 	}
 
+	public List<String> getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(List<String> department) {
+		this.department = department;
+	}
+
+	@Override
+	public String toString() {
+		return "id= " + id + ", name= " + name + ", salary= " + salary;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -77,11 +98,7 @@ public class EmployeePayrollData {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		EmployeePayrollData that = (EmployeePayrollData) o;
-		return id == that.id && Double.compare(that.salary, salary) == 0 && name.equals(that.name);
-	}
-
-	@Override
-	public String toString() {
-		return "id= " + id + ", name= " + name + ", salary= " + salary;
+		return id == that.id && Double.compare(that.salary, salary) == 0 && name.contentEquals(that.name)
+				&& gender.contentEquals(that.gender) && department.equals(that.department);
 	}
 }
