@@ -89,6 +89,36 @@ public class EmployeePayrollService {
 
 	}
 
+	public boolean updateEmployeeSalaryUsingThreads(List<EmployeePayrollData> empPayrollDataList)
+			throws EmployeePayrollException {
+		Map<Integer, Boolean> empUpdateStatus = new HashMap<Integer, Boolean>();
+		empPayrollDataList.forEach(employeePayrollData -> {
+			empUpdateStatus.put(employeePayrollData.hashCode(), false);
+			Runnable task = () -> {
+				try {
+					employeePayrollDBService.updateEmployeeSalary(employeePayrollData.getName(),
+							employeePayrollData.getSalary());
+				} catch (EmployeePayrollException e) {
+					e.printStackTrace();
+				}
+				empUpdateStatus.put(employeePayrollData.hashCode(), true);
+			};
+			Thread thread = new Thread(task, employeePayrollData.getName());
+			thread.start();
+		});
+		while (empUpdateStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.THREAD_FAILURE,
+						e.getMessage());
+			}
+		}
+		if (empUpdateStatus.containsValue(false))
+			return false;
+		return true;
+	}
+
 	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender, String dept)
 			throws EmployeePayrollException, SQLException {
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, start, gender, dept));
@@ -103,7 +133,6 @@ public class EmployeePayrollService {
 			} catch (EmployeePayrollException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			System.out.println("Emp Added : " + empPayrollData.getName());

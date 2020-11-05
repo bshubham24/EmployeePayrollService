@@ -31,7 +31,7 @@ public class EmployeePayrollDBService {
 		connectionCounter++;
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?characterEncoding=utf8";
 		String userName = "root";
-		String password = System.getenv("password");
+		String password = "CL@Liv#6@RM#13";// System.getenv("password");
 		Connection connection = null;
 		try {
 			System.out.println("Processing Thread : " + Thread.currentThread().getName()
@@ -101,13 +101,31 @@ public class EmployeePayrollDBService {
 		return employeePayrollList;
 	}
 
-	public int updateEmployeeData(String name, double salary) throws EmployeePayrollException {
-		return this.updateEmployeeDataUsingStatement(name, salary);
+	public void updateEmployeeSalary(String name, double salary) throws EmployeePayrollException {
+		this.updateEmployeeData(name, salary);
+		this.updateEmployeePayroll(name, salary);
 	}
 
-	private int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollException {
+	public int updateEmployeeData(String name, double salary) throws EmployeePayrollException {
 		String sql = String.format("update employee_data set salary = %.2f where name ='%s' AND status = 'active';",
 				salary, name);
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			return statement.executeUpdate(sql);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.CONNECTION_ERROR, e.getMessage());
+		}
+	}
+
+	private int updateEmployeePayroll(String name, double salary) throws EmployeePayrollException {
+		double deductions = salary * 0.2;
+		double taxablePay = salary - deductions;
+		double tax = taxablePay * 0.1;
+		double netPay = salary - tax;
+		String sql = String.format(
+				"update payroll_details set basic_pay=%f, deductions=%f, taxable_pay= %f, "
+						+ "tax=%f, net_pay=%f where id = (select id from employee_data where name='%s');",
+				salary, deductions, taxablePay, tax, netPay, name);
 		try (Connection connection = this.getConnection()) {
 			Statement statement = connection.createStatement();
 			return statement.executeUpdate(sql);
