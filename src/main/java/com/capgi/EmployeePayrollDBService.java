@@ -27,7 +27,7 @@ public class EmployeePayrollDBService {
 
 	private synchronized Connection getConnection() {
 		connectionCounter++;
-		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?characterEncoding=utf8"; // characterEncoding=utf8
+		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?characterEncoding=utf8";
 		String userName = "root";
 		String password = System.getenv("password");
 		Connection connection = null;
