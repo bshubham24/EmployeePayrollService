@@ -3,8 +3,11 @@ package com.capgi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -79,7 +82,7 @@ public class EmployeePayrollServiceDBTest {
 		deptList.add("Marketing");
 		deptList.add("Software");
 		EmployeePayrollData data = new EmployeePayrollData();
-		data.setDepartment(deptList);
+		data.setDepartmentList(deptList);
 		EmployeePayrollService empPayRollService = new EmployeePayrollService();
 		empPayRollService.readEmployeePayrollData(IOService.DB_IO);
 		empPayRollService.addEmployeeToPayroll("tanya", 40000, LocalDate.now(), "F", deptList.get(0));
@@ -96,6 +99,27 @@ public class EmployeePayrollServiceDBTest {
 		empPayRollService.remove("tanya");
 		List<EmployeePayrollData> empPayrollList = empPayRollService.readEmployeePayrollData(IOService.DB_IO);
 		assertEquals(11, empPayrollList.size());
+	}
+
+	@Test
+	public void givenMultipleEmployee_WhenAdded_ShouldMatchEntries() throws EmployeePayrollException {
+		List<String> deptList = new ArrayList<>();
+		deptList.add("Sales");
+		deptList.add("Marketing");
+		deptList.add("Software");
+		EmployeePayrollData data = new EmployeePayrollData();
+		data.setDepartmentList(deptList);
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		EmployeePayrollData[] arrOfEmps = {
+				new EmployeePayrollData(0, "tanya", 40000.0, LocalDate.now(), "F", deptList.get(0)),
+				new EmployeePayrollData(0, "aman", 40000.0, LocalDate.now(), "M", deptList.get(1)),
+				new EmployeePayrollData(0, "shivi", 40000.0, LocalDate.now(), "F", deptList.get(2)) };
+		empPayRollService.readEmployeePayrollData(IOService.DB_IO);
+		Instant start = Instant.now();
+		empPayRollService.addEmployeeToPayroll(Arrays.asList(arrOfEmps));
+		Instant end = Instant.now();
+		System.out.println("Duration without Thread : " + Duration.between(start, end));
+		assertEquals(3, empPayRollService.countEntries(IOService.DB_IO));
 	}
 
 }

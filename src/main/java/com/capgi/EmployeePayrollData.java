@@ -9,7 +9,8 @@ public class EmployeePayrollData {
 	private double salary;
 	private LocalDate date;
 	private String gender;
-	private List<String> department;
+	private String department;
+	private List<String> departmentList;
 
 	public EmployeePayrollData(Integer id, String name, Double salary) {
 		this.id = id;
@@ -33,7 +34,7 @@ public class EmployeePayrollData {
 	}
 
 	public EmployeePayrollData(Integer id, String name, Double salary, LocalDate date, String gender,
-			List<String> department) {
+			String department) {
 		this(id, name, salary, date, gender);
 		this.department = department;
 	}
@@ -81,12 +82,16 @@ public class EmployeePayrollData {
 		this.gender = gender;
 	}
 
-	public List<String> getDepartment() {
+	public String getDepartment() {
 		return department;
 	}
 
-	public void setDepartment(List<String> department) {
+	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public void setDepartmentList(List<String> departmentList) {
+		this.departmentList = departmentList;
 	}
 
 	@Override
