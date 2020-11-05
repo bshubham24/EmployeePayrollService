@@ -2,7 +2,9 @@ package com.capgi;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class EmployeePayrollService {
@@ -102,6 +104,37 @@ public class EmployeePayrollService {
 			}
 			System.out.println("Emp Added : " + empPayrollData.getName());
 		});
+		System.out.println(this.employeePayrollList);
+	}
+
+	public void addEmpToPayrollWithThreads(List<EmployeePayrollData> empPayrollDataList)
+			throws EmployeePayrollException {
+		Map<Integer, Boolean> employeeStatusMap = new HashMap<Integer, Boolean>();
+		empPayrollDataList.forEach(employeePayrollData -> {
+			employeeStatusMap.put(employeePayrollData.hashCode(), false);
+			Runnable task = () -> {
+				System.out.println("Employee Being Added : " + Thread.currentThread().getName());
+				try {
+					this.addEmployeeToPayroll(employeePayrollData.getName(), employeePayrollData.getSalary(),
+							employeePayrollData.getDate(), employeePayrollData.getGender(),
+							employeePayrollData.getDepartment());
+				} catch (EmployeePayrollException e) {
+					e.printStackTrace();
+				}
+				employeeStatusMap.put(employeePayrollData.hashCode(), true);
+				System.out.println("Employee Added : " + Thread.currentThread().getName());
+			};
+			Thread thread = new Thread(task, employeePayrollData.getName());
+			thread.start();
+		});
+		while (employeeStatusMap.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.THREAD_FAILURE,
+						e.getMessage());
+			}
+		}
 		System.out.println(this.employeePayrollList);
 	}
 

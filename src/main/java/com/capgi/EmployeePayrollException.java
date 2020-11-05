@@ -2,7 +2,7 @@ package com.capgi;
 
 public class EmployeePayrollException extends Exception {
 	public enum ExceptionType {
-		CONNECTION_ERROR, INVALID_INFO;
+		CONNECTION_ERROR, INVALID_INFO, THREAD_FAILURE;
 	}
 
 	ExceptionType type;
