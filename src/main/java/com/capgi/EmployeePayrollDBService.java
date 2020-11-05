@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeePayrollDBService {
-
+	private int connectionCounter = 0;
 	private static EmployeePayrollDBService employeePayrollDBService;
 	private PreparedStatement employeePayrollDataStatement;
 
@@ -25,13 +25,18 @@ public class EmployeePayrollDBService {
 		return employeePayrollDBService;
 	}
 
-	private Connection getConnection() {
+	private synchronized Connection getConnection() {
+		connectionCounter++;
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?characterEncoding=utf8"; // characterEncoding=utf8
 		String userName = "root";
-		String password = "CL@Liv#6@RM#13";
+		String password = System.getenv("password");
 		Connection connection = null;
 		try {
+			System.out.println("Processing Thread : " + Thread.currentThread().getName()
+					+ "\nConnecting to database with id : " + connectionCounter);
 			connection = (Connection) DriverManager.getConnection(jdbcURL, userName, password);
+			System.out.println("Processing Thread : " + Thread.currentThread().getName() + "Id : " + connectionCounter
+					+ "\nConnection successful");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
