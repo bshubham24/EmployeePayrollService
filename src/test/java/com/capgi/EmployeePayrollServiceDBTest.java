@@ -3,6 +3,7 @@ package com.capgi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -76,7 +77,7 @@ public class EmployeePayrollServiceDBTest {
 	}
 
 	@Test
-	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
+	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
 		List<String> deptList = new ArrayList<>();
 		deptList.add("Sales");
 		deptList.add("Marketing");
@@ -126,4 +127,22 @@ public class EmployeePayrollServiceDBTest {
 		assertEquals(6, empPayRollService.countEntries(IOService.DB_IO));
 	}
 
+	@Test
+	public void givenMultipleEmployee_WhenAddedWithThreads_ShouldMatchEntries() throws EmployeePayrollException {
+		List<String> deptList = new ArrayList<>();
+		deptList.add("Sales");
+		deptList.add("Marketing");
+		deptList.add("Software");
+		EmployeePayrollService empPayRollService = new EmployeePayrollService();
+		EmployeePayrollData[] arrOfEmps = {
+				new EmployeePayrollData(0, "tanya", 40000.0, LocalDate.now(), "F", deptList.get(0)),
+				new EmployeePayrollData(0, "aman", 40000.0, LocalDate.now(), "M", deptList.get(1)),
+				new EmployeePayrollData(0, "shivi", 40000.0, LocalDate.now(), "F", deptList.get(2)) };
+		empPayRollService.readEmployeePayrollData(IOService.DB_IO);
+		Instant threadStart = Instant.now();
+		empPayRollService.addEmpToPayrollWithThreads(Arrays.asList(arrOfEmps));
+		Instant threadEnd = Instant.now();
+		System.out.println("Duration with Thread : " + Duration.between(threadStart, threadEnd));
+		assertEquals(3, empPayRollService.countEntries(IOService.DB_IO));
+	}
 }

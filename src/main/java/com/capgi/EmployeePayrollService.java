@@ -1,5 +1,6 @@
 package com.capgi;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +90,7 @@ public class EmployeePayrollService {
 	}
 
 	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender, String dept)
-			throws EmployeePayrollException {
+			throws EmployeePayrollException, SQLException {
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, start, gender, dept));
 	}
 
@@ -100,6 +101,9 @@ public class EmployeePayrollService {
 				this.addEmployeeToPayroll(empPayrollData.getName(), empPayrollData.getSalary(),
 						empPayrollData.getDate(), empPayrollData.getGender(), empPayrollData.getDepartment());
 			} catch (EmployeePayrollException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			System.out.println("Emp Added : " + empPayrollData.getName());
@@ -119,6 +123,9 @@ public class EmployeePayrollService {
 							employeePayrollData.getDate(), employeePayrollData.getGender(),
 							employeePayrollData.getDepartment());
 				} catch (EmployeePayrollException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				employeeStatusMap.put(employeePayrollData.hashCode(), true);
