@@ -9,6 +9,21 @@
       "name": "David",
       "salary": "5000",
       "id": 2
+    },
+    {
+      "id": 3,
+      "name": "kiara",
+      "salary": 8000
+    },
+    {
+      "id": 4,
+      "name": "kiara",
+      "salary": 8000
+    },
+    {
+      "id": 5,
+      "name": "kiara",
+      "salary": 8000
     }
   ]
-} 
+}

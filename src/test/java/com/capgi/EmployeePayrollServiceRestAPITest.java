@@ -1,5 +1,6 @@
 package com.capgi;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.junit.Assert;
@@ -10,6 +11,7 @@ import com.google.gson.Gson;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 
 public class EmployeePayrollServiceRestAPITest {
 	@Before
@@ -24,6 +26,14 @@ public class EmployeePayrollServiceRestAPITest {
 		return arrOfEmp;
 	}
 
+	private Response addEmpToJsonServer(EmployeePayrollData employeePayrollData) {
+		String empJson = new Gson().toJson(employeePayrollData);
+		RequestSpecification request = RestAssured.given();
+		request.header("Content-Type", "application/json");
+		request.body(empJson);
+		return request.post("/employees");
+	}
+
 	@Test
 	public void givenEmployeeDataInJsonServer_WhenRetrived_ShouldMatchCount() {
 		EmployeePayrollData[] arrOfEmp = getEmpList();
@@ -31,5 +41,21 @@ public class EmployeePayrollServiceRestAPITest {
 		empPayrollService = new EmployeePayrollService(Arrays.asList(arrOfEmp));
 		long entries = empPayrollService.countEntries(EmployeePayrollService.IOService.REST_IO);
 		Assert.assertEquals(2, entries);
+	}
+
+	@Test
+	public void givenNewEmployee_WhenAdded_ShouldMatch201ResponseAndCount()
+			throws EmployeePayrollException, SQLException {
+		EmployeePayrollData[] arrOfEmp = getEmpList();
+		EmployeePayrollService empPayrollService;
+		empPayrollService = new EmployeePayrollService(Arrays.asList(arrOfEmp));
+		EmployeePayrollData employeePayrollData = new EmployeePayrollData(0, "kiara", 8000.0);
+		Response response = addEmpToJsonServer(employeePayrollData);
+		int statusCode = response.getStatusCode();
+		Assert.assertEquals(201, statusCode);
+		employeePayrollData = new Gson().fromJson(response.asString(), EmployeePayrollData.class);
+		empPayrollService.addEmployeeToPayroll(employeePayrollData, EmployeePayrollService.IOService.REST_IO);
+		long entries = empPayrollService.countEntries(EmployeePayrollService.IOService.REST_IO);
+		Assert.assertEquals(5, entries);
 	}
 }
