@@ -24,7 +24,7 @@ public class EmployeePayrollService {
 
 	public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
 		this();
-		this.employeePayrollList = employeePayrollList;
+		this.employeePayrollList = new ArrayList<>(employeePayrollList);
 	}
 
 	private void readEmployeePayrollData(Scanner consoleInputReader) {
@@ -48,10 +48,8 @@ public class EmployeePayrollService {
 	public long countEntries(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO))
 			return new EmployeePayrollFileIOService().countEntries();
-		else if (ioService.equals(IOService.DB_IO))
-			return employeePayrollList.size();
 		else
-			return 0;
+			return employeePayrollList.size();
 	}
 
 	public void printData(IOService ioService) {
