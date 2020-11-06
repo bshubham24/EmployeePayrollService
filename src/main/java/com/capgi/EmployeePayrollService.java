@@ -117,6 +117,16 @@ public class EmployeePayrollService {
 		return true;
 	}
 
+	public void addEmployeeToPayroll(EmployeePayrollData employeePayrollData, IOService ioService)
+			throws EmployeePayrollException, SQLException {
+		if (ioService.equals(IOService.DB_IO))
+			this.addEmployeeToPayroll(employeePayrollData.getName(), employeePayrollData.getSalary(),
+					employeePayrollData.getDate(), employeePayrollData.getGender(),
+					employeePayrollData.getDepartment());
+		else
+			employeePayrollList.add(employeePayrollData);
+	}
+
 	public void addEmployeeToPayroll(String name, double salary, LocalDate start, String gender, String dept)
 			throws EmployeePayrollException, SQLException {
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, start, gender, dept));
