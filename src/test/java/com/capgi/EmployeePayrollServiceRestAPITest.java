@@ -26,6 +26,14 @@ public class EmployeePayrollServiceRestAPITest {
 		return arrOfEmp;
 	}
 
+	private Response updateEmployeeSalary(EmployeePayrollData employeePayrollData) {
+		String empJson = new Gson().toJson(employeePayrollData);
+		RequestSpecification request = RestAssured.given();
+		request.header("Content-Type", "application/json");
+		request.body(empJson);
+		return request.put("/employees/" + employeePayrollData.getId());
+	}
+
 	private Response addEmpToJsonServer(EmployeePayrollData employeePayrollData) {
 		String empJson = new Gson().toJson(employeePayrollData);
 		RequestSpecification request = RestAssured.given();
@@ -78,5 +86,18 @@ public class EmployeePayrollServiceRestAPITest {
 		}
 		long entries = empPayrollService.countEntries(EmployeePayrollService.IOService.REST_IO);
 		Assert.assertEquals(7, entries);
+	}
+
+	@Test
+	public void givenEmployeeSalary_WhenUpdated_ShouldMatch200Response() throws EmployeePayrollException {
+		EmployeePayrollData[] arrOfEmp = getEmpList();
+		EmployeePayrollService empPayrollService;
+		empPayrollService = new EmployeePayrollService(Arrays.asList(arrOfEmp));
+
+		empPayrollService.updateEmployeeSalary("Ananya", 8000.0, EmployeePayrollService.IOService.REST_IO);
+		EmployeePayrollData employeePayrollData = empPayrollService.getEmployeePayrollData("Ananya");
+		Response response = updateEmployeeSalary(employeePayrollData);
+		int statusCode = response.getStatusCode();
+		Assert.assertEquals(200, statusCode);
 	}
 }
