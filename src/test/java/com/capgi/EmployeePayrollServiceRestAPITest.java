@@ -26,6 +26,14 @@ public class EmployeePayrollServiceRestAPITest {
 		return arrOfEmp;
 	}
 
+	private Response addEmpToJsonServer(EmployeePayrollData employeePayrollData) {
+		String empJson = new Gson().toJson(employeePayrollData);
+		RequestSpecification request = RestAssured.given();
+		request.header("Content-Type", "application/json");
+		request.body(empJson);
+		return request.post("/employees");
+	}
+
 	private Response updateEmployeeSalary(EmployeePayrollData employeePayrollData) {
 		String empJson = new Gson().toJson(employeePayrollData);
 		RequestSpecification request = RestAssured.given();
@@ -34,12 +42,12 @@ public class EmployeePayrollServiceRestAPITest {
 		return request.put("/employees/" + employeePayrollData.getId());
 	}
 
-	private Response addEmpToJsonServer(EmployeePayrollData employeePayrollData) {
+	private Response deleteEmployee(EmployeePayrollData employeePayrollData) {
 		String empJson = new Gson().toJson(employeePayrollData);
 		RequestSpecification request = RestAssured.given();
 		request.header("Content-Type", "application/json");
 		request.body(empJson);
-		return request.post("/employees");
+		return request.delete("/employees/" + employeePayrollData.getId());
 	}
 
 	@Test
@@ -99,5 +107,21 @@ public class EmployeePayrollServiceRestAPITest {
 		Response response = updateEmployeeSalary(employeePayrollData);
 		int statusCode = response.getStatusCode();
 		Assert.assertEquals(200, statusCode);
+	}
+
+	@Test
+	public void givenEmployeeData_WhenDeleted_ShouldMatch200Response() {
+		EmployeePayrollData[] arrOfEmp = getEmpList();
+		EmployeePayrollService empPayrollService;
+		empPayrollService = new EmployeePayrollService(Arrays.asList(arrOfEmp));
+
+		EmployeePayrollData employeePayrollData = empPayrollService.getEmployeePayrollData("Ananya");
+		Response response = deleteEmployee(employeePayrollData);
+		int statusCode = response.getStatusCode();
+		Assert.assertEquals(200, statusCode);
+
+		empPayrollService.deleteEmployee("Virat", EmployeePayrollService.IOService.REST_IO);
+		long entries = empPayrollService.countEntries(EmployeePayrollService.IOService.REST_IO);
+		Assert.assertEquals(5, entries);
 	}
 }

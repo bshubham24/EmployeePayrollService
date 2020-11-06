@@ -195,6 +195,14 @@ public class EmployeePayrollService {
 		employeePayrollDBService.remove(name);
 	}
 
+	public void deleteEmployee(String name, IOService ioService) {
+		EmployeePayrollData employeePayrollData = null;
+		if (ioService.equals(IOService.REST_IO)) {
+			employeePayrollData = this.getEmployeePayrollData(name);
+		}
+		employeePayrollList.remove(employeePayrollData);
+	}
+
 	public List<EmployeePayrollData> getEmployeePayrollDataForDateRange(LocalDate startDate, LocalDate endDate)
 			throws EmployeePayrollException {
 		return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate, endDate);

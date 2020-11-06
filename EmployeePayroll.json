@@ -11,29 +11,19 @@
       "id": 2
     },
     {
-      "id": 3,
-      "name": "kiara",
-      "salary": 8000
-    },
-    {
-      "id": 4,
-      "name": "kiara",
-      "salary": 8000
-    },
-    {
-      "id": 5,
-      "name": "kiara",
-      "salary": 8000
-    },
-    {
-      "id": 6,
+      "id": 10,
       "name": "Ananya",
-      "salary": 8000
+      "salary": 3000
     },
     {
-      "id": 7,
+      "id": 11,
       "name": "Virat",
       "salary": 9000
+    },
+    {
+      "id": 12,
+      "name": "kiara",
+      "salary": 8000
     }
   ]
 }
