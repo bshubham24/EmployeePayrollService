@@ -87,6 +87,15 @@ public class EmployeePayrollService {
 
 	}
 
+	public void updateEmployeeSalary(String name, double salary, IOService ioService) throws EmployeePayrollException {
+		if (ioService.equals(IOService.DB_IO)) {
+			this.updateEmployeeSalary(name, salary);
+		}
+		EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+		if (employeePayrollData != null)
+			employeePayrollData.setSalary(salary);
+	}
+
 	public boolean updateEmployeeSalaryUsingThreads(List<EmployeePayrollData> empPayrollDataList)
 			throws EmployeePayrollException {
 		Map<Integer, Boolean> empUpdateStatus = new HashMap<Integer, Boolean>();
@@ -191,7 +200,7 @@ public class EmployeePayrollService {
 		return employeePayrollDBService.getEmployeePayrollDataForDateRange(startDate, endDate);
 	}
 
-	private EmployeePayrollData getEmployeePayrollData(String name) {
+	public EmployeePayrollData getEmployeePayrollData(String name) {
 		EmployeePayrollData employeePayrollData;
 		employeePayrollData = this.employeePayrollList.stream().filter(employee -> employee.getName().equals(name))
 				.findFirst().orElse(null);
