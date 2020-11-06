@@ -58,4 +58,25 @@ public class EmployeePayrollServiceRestAPITest {
 		long entries = empPayrollService.countEntries(EmployeePayrollService.IOService.REST_IO);
 		Assert.assertEquals(5, entries);
 	}
+
+	@Test
+	public void givenListOfEmployees_WhenAdded_ShouldMatch201ResponseAndCount()
+			throws EmployeePayrollException, SQLException {
+		EmployeePayrollData[] arrOfEmp = getEmpList();
+		EmployeePayrollService empPayrollService;
+		empPayrollService = new EmployeePayrollService(Arrays.asList(arrOfEmp));
+
+		EmployeePayrollData[] arrOfEmpPayroll = { new EmployeePayrollData(0, "Ananya", 3000.0),
+				new EmployeePayrollData(0, "Virat", 9000.0) };
+		for (EmployeePayrollData employeePayrollData : arrOfEmpPayroll) {
+			Response response = addEmpToJsonServer(employeePayrollData);
+			int statusCode = response.getStatusCode();
+			Assert.assertEquals(201, statusCode);
+
+			employeePayrollData = new Gson().fromJson(response.asString(), EmployeePayrollData.class);
+			empPayrollService.addEmployeeToPayroll(employeePayrollData, EmployeePayrollService.IOService.REST_IO);
+		}
+		long entries = empPayrollService.countEntries(EmployeePayrollService.IOService.REST_IO);
+		Assert.assertEquals(7, entries);
+	}
 }
